@@ -20,29 +20,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-FROM golang:alpine
-
-ENV TZ="Europe/Amsterdam"
+FROM golang:alpine as builder
 
 # Add missing git
-RUN apk update && \
-    apk upgrade && \
-    apk add git
-
+RUN apk --update add git build-base
+WORKDIR $GOPATH/src/influxdb-relay/
+COPY . .
 # Install
-RUN go get -u github.com/vente-privee/influxdb-relay && \
-    mv /go/bin/influxdb-relay /usr/bin/influxdb-relay && \
-    chmod 755 /usr/bin/influxdb-relay && \
-    mkdir /etc/influxdb-relay && \
-    touch /etc/influxdb-relay/influxdb-relay.conf
+RUN go get -d -v
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags='-w -s -extldflags "-static"' -o /go/bin/influxdb-relay
 
-# Clean
-RUN rm -fr /go/src/github.com && \
-    apk del git
+FROM scratch
+# Copy our static executable.
+COPY --from=builder /go/bin/influxdb-relay /usr/bin/influxdb-relay
 
 ENTRYPOINT [ "/usr/bin/influxdb-relay" ]
 
 EXPOSE 9096
 
-CMD [ "-config", "/etc/influxdb-relay/influxdb-relay.conf" ]
+CMD ["-config", "/etc/influxdb-relay/influxdb-relay.conf" ]
 # EOF
+VOLUME ["/etc/influxdb-relay/influxdb-relay.conf"]
