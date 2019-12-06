@@ -27,10 +27,9 @@ ENV GOARCH=amd64
 
 # Add missing git
 RUN apk --update add git build-base
-WORKDIR /go/src/influxdb-relay/
+WORKDIR /go/src/github.com/strike-team/influxdb-relay/
 COPY . .
 # Install
-RUN go get -d -v
 RUN CGO_ENABLED=0 go build -a -ldflags='-w -s -extldflags "-static"' -o /go/bin/influxdb-relay
 
 FROM scratch
