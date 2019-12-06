@@ -40,6 +40,8 @@ ENTRYPOINT [ "/usr/bin/influxdb-relay" ]
 
 EXPOSE 9096
 
+USER 1001
+
 VOLUME ["/etc/influxdb-relay/influxdb-relay.conf"]
 
 CMD ["-config", "/etc/influxdb-relay/influxdb-relay.conf" ]
