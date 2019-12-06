@@ -24,7 +24,7 @@ FROM golang:alpine as builder
 
 # Add missing git
 RUN apk --update add git build-base
-WORKDIR $GOPATH/src/influxdb-relay/
+WORKDIR /go/src/influxdb-relay/
 COPY . .
 # Install
 RUN go get -d -v
@@ -38,6 +38,7 @@ ENTRYPOINT [ "/usr/bin/influxdb-relay" ]
 
 EXPOSE 9096
 
+VOLUME ["/etc/influxdb-relay/influxdb-relay.conf"]
+
 CMD ["-config", "/etc/influxdb-relay/influxdb-relay.conf" ]
 # EOF
-VOLUME ["/etc/influxdb-relay/influxdb-relay.conf"]
