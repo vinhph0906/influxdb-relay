@@ -22,13 +22,16 @@
 
 FROM golang:alpine as builder
 
+ENV GOOS=linux
+ENV GOARCH=amd64
+
 # Add missing git
 RUN apk --update add git build-base
 WORKDIR /go/src/influxdb-relay/
 COPY . .
 # Install
 RUN go get -d -v
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags='-w -s -extldflags "-static"' -o /go/bin/influxdb-relay
+RUN CGO_ENABLED=0 go build -a -ldflags='-w -s -extldflags "-static"' -o /go/bin/influxdb-relay
 
 FROM scratch
 # Copy our static executable.
