@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"golang.org/x/time/rate"
 	"io/ioutil"
 	"log"
 	"net"
@@ -19,8 +18,11 @@ import (
 	"sync/atomic"
 	"time"
 
+	"golang.org/x/time/rate"
+
 	"github.com/influxdata/influxdb/models"
 	"github.com/strike-team/influxdb-relay/config"
+	"github.com/strike-team/influxdb-relay/metric"
 )
 
 // HTTP is a relay for HTTP influxdb writes
@@ -175,7 +177,7 @@ func (h *HTTP) Run() error {
 		h.logger.Printf("starting %s relay %q on %v", strings.ToUpper(h.schema), h.Name(), h.addr)
 	}
 
-	err = http.Serve(l, h)
+	err = http.Serve(l, metric.HTTPHandler(h))
 	if atomic.LoadInt64(&h.closing) != 0 {
 		return nil
 	}
@@ -237,7 +239,6 @@ func jsonResponse(w http.ResponseWriter, r response) {
 }
 
 type stats interface {
-
 }
 
 type poster interface {
@@ -266,7 +267,7 @@ func newSimplePoster(location string, timeout time.Duration, skipTLSVerification
 	return &simplePoster{
 		client: &http.Client{
 			Timeout:   timeout,
-			Transport: transport,
+			Transport: metric.HTTPTransport(transport),
 		},
 		location: location,
 	}
