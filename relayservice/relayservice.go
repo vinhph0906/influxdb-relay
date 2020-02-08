@@ -6,12 +6,14 @@ import (
 	"sync"
 
 	"github.com/strike-team/influxdb-relay/config"
+	"github.com/strike-team/influxdb-relay/metric"
 	"github.com/strike-team/influxdb-relay/relay"
 )
 
 // Service is a map of relays
 type Service struct {
 	relays map[string]relay.Relay
+	ms     *metric.Server
 }
 
 // New loads the different relays from the configuration file
@@ -41,6 +43,12 @@ func New(config config.Config) (*Service, error) {
 		s.relays[u.Name()] = u
 	}
 
+	ms, err := metric.NewServer()
+	if err != nil {
+		return nil, err
+	}
+	s.ms = ms
+
 	return s, nil
 }
 
@@ -62,6 +70,15 @@ func (s *Service) Run() {
 		}()
 	}
 
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+
+		if err := s.ms.Run(); err != nil {
+			log.Printf("Error running metric server: %v", err)
+		}
+	}()
+
 	wg.Wait()
 }
 
@@ -70,4 +87,6 @@ func (s *Service) Stop() {
 	for _, v := range s.relays {
 		v.Stop()
 	}
+
+	s.ms.Stop()
 }
