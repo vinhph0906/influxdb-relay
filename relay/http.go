@@ -16,7 +16,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/influxdata/influxdb/models"
+	"github.com/influxdata/influxdb1-client/models"
 )
 
 // HTTP is a relay for HTTP influxdb writes
@@ -114,9 +114,9 @@ func (h *HTTP) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 
 	if r.URL.Path == "/ping" && (r.Method == "GET" || r.Method == "HEAD") {
-			w.Header().Add("X-InfluxDB-Version", "relay")
-			w.WriteHeader(http.StatusNoContent)
-			return
+		w.Header().Add("X-InfluxDB-Version", "relay")
+		w.WriteHeader(http.StatusNoContent)
+		return
 	}
 
 	if r.URL.Path != "/write" {
