@@ -6,3 +6,4 @@ influxdb-relay
 pkg
 pkg/*
 .vscode/
+/build
