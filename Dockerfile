@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-FROM golang:1.13.5-alpine as builder
+FROM golang:1.18-alpine as builder
 
 ENV GOOS=linux
 ENV GOARCH=amd64
