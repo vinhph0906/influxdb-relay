@@ -20,7 +20,7 @@ import (
 
 	"golang.org/x/time/rate"
 
-	"github.com/influxdata/influxdb/models"
+	"github.com/influxdata/influxdb1-client/models"
 	"github.com/strike-team/influxdb-relay/config"
 	"github.com/strike-team/influxdb-relay/metric"
 )

@@ -8,11 +8,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/influxdata/influxdb/models"
+	"github.com/influxdata/influxdb1-client/models"
 )
 
 type status struct {
-	Status  map[string]stats `json:"status"`
+	Status map[string]stats `json:"status"`
 }
 
 func (h *HTTP) handleStatus(w http.ResponseWriter, r *http.Request, _ time.Time) {
@@ -202,12 +202,12 @@ func (h *HTTP) handleAdmin(w http.ResponseWriter, r *http.Request, _ time.Time) 
 		close(responses)
 	}()
 
-		var errResponse *responseData
-		for resp := range responses {
-			switch resp.StatusCode / 100 {
-			case 2:
-				w.WriteHeader(http.StatusNoContent)
-				return
+	var errResponse *responseData
+	for resp := range responses {
+		switch resp.StatusCode / 100 {
+		case 2:
+			w.WriteHeader(http.StatusNoContent)
+			return
 
 		case 4:
 			// User error

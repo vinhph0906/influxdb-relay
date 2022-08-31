@@ -9,9 +9,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/influxdata/influxdb/models"
-
 	"github.com/strike-team/influxdb-relay/config"
+
+	"github.com/influxdata/influxdb1-client/models"
 )
 
 const (
