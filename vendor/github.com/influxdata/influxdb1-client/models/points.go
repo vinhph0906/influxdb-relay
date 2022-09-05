@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"math"
 	"sort"
 	"strconv"
@@ -1597,6 +1598,9 @@ func parseTags(buf []byte, dst Tags) Tags {
 	// of tags.
 	var i int
 	walkTags(buf, func(key, value []byte) bool {
+		if i >= len(dst) {
+			log.Println(buf)
+		}
 		dst[i].Key, dst[i].Value = key, value
 		i++
 		return true
